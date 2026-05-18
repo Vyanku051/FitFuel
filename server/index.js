@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const dns = require('dns');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
@@ -12,6 +13,14 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Ensure Node uses a working DNS resolver for Atlas SRV lookups.
+// If your local DNS service on 127.0.0.1 blocks SRV queries, override it here.
+if (!process.env.DNS_SERVERS) {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} else {
+  dns.setServers(process.env.DNS_SERVERS.split(',').map((s) => s.trim()));
+}
 
 // Connect MongoDB
 mongoose.connect(process.env.MONGO_URI)
