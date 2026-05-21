@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const protect = require('../middleware/authMiddleware');
+const { getMealSuggestions } = require('../controllers/aiController');
 
-router.get('/', (req, res) => {
-  res.json({ message: 'AI route working' });
-});
+router.post('/suggest', protect, getMealSuggestions);
 
 module.exports = router;
